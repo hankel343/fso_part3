@@ -32,6 +32,13 @@ app.get('/api/persons', (req, res) => {
     res.send(persons);
 })
 
+app.get('/api/persons/:id', (req, res) => {
+    const id = Number(req.params.id);
+    const person = persons.find(p => p.id === id);
+
+    res.send(person);
+})
+
 app.get('/info', (req, res) => {
     const numPeople = persons.length;
     const timeStamp = new Date();

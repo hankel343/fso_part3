@@ -39,7 +39,7 @@ app.get('/api/persons/:id', (req, res) => {
 
     person
     ? res.send(person)
-    : res.send(404)
+    : res.send(404).end();
 })
 
 app.get('/info', (req, res) => {
@@ -69,12 +69,27 @@ app.post('/api/persons', (req, res) => {
         return Math.floor(Math.random() * 10000);
     }
 
+    const isDuplicateName = (name) => {
+        return (persons.find(p => p.name === name) != -1);
+    }
+
     const newPerson = req.body;
 
-    newPerson.id = generateId();
-    console.log(newPerson);
-    res.json(newPerson);
+    if (newPerson.name === '') {
+        return res.status(400)
+        .json({'error': 'Missing name'});
+    } else if (newPerson.number === '') {
+        return res.status(400)
+        .json({'error': 'Missing number'});
+    } else if (isDuplicateName(newPerson.name)) {
+        return res.status(400)
+        .json({'error': `${newPerson.name} is already in the phone book`});
+    }
 
+    newPerson.id = generateId();
+    persons = persons.concat(newPerson);
+
+    return res.json(newPerson);
 })
 
 const PORT = 3001;

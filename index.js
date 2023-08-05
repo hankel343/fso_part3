@@ -36,7 +36,9 @@ app.get('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id);
     const person = persons.find(p => p.id === id);
 
-    res.send(person);
+    person
+    ? res.send(person)
+    : res.send(404)
 })
 
 app.get('/info', (req, res) => {
@@ -50,6 +52,15 @@ app.get('/info', (req, res) => {
     `
 
     res.send(html);
+})
+
+app.delete('/api/persons/:id', (req, res) => {
+    const id = Number(req.params.id);
+    persons = persons.filter(p => p.id !== id);
+
+    console.log("Deleting: ", id);
+
+    res.send(204);
 })
 
 const PORT = 3001;

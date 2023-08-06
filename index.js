@@ -3,7 +3,12 @@ const morgan = require('morgan');
 
 const app = express();
 app.use(express.json());
-app.use(morgan('tiny'));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post'));
+
+morgan
+    .token('post', (req, res) => {
+        return JSON.stringify(req.body);
+    })
 
 let persons = [
     { 
@@ -73,7 +78,7 @@ app.post('/api/persons', (req, res) => {
     }
 
     const isDuplicateName = (name) => {
-        return (persons.find(p => p.name === name) != -1);
+        return (persons.find(p => p.name === name) != undefined);
     }
 
     const newPerson = req.body;
@@ -97,4 +102,4 @@ app.post('/api/persons', (req, res) => {
 
 const PORT = 3001;
 app.listen(PORT);
-console.log(`Server running on port ${PORT}`)
+console.log(`Server running on port ${PORT}`);

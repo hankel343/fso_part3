@@ -6,6 +6,7 @@ const app = express();
 app.use(express.json());
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post'));
 app.use(cors());
+app.use(express.static('build'));
 
 morgan
     .token('post', (req, res) => {
@@ -87,13 +88,13 @@ app.post('/api/persons', (req, res) => {
 
     if (newPerson.name === '') {
         return res.status(400)
-        .json({'error': 'Missing name'});
+            .json({'error': 'Missing name'});
     } else if (newPerson.number === '') {
         return res.status(400)
-        .json({'error': 'Missing number'});
+            .json({'error': 'Missing number'});
     } else if (isDuplicateName(newPerson.name)) {
         return res.status(400)
-        .json({'error': `${newPerson.name} is already in the phone book`});
+            .json({'error': `${newPerson.name} is already in the phone book`});
     }
 
     newPerson.id = generateId();

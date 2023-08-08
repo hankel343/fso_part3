@@ -48,8 +48,8 @@ app.get('/api/persons/:id', (req, res) => {
     const person = persons.find(p => p.id === id);
 
     person
-    ? res.send(person)
-    : res.send(404).end();
+        ? res.send(person)
+        : res.send(404).end();
 })
 
 app.get('/info', (req, res) => {
@@ -101,6 +101,29 @@ app.post('/api/persons', (req, res) => {
 
     return res.json(newPerson);
 })
+
+app.put('/api/persons/:id', (req, res) => {
+    const id = Number(req.params.id);
+    console.log(id);
+    console.log(typeof(persons[0].id));
+    console.log(typeof(id));
+    const oldPersonIdx = persons.findIndex(p => Number(p.id) === id);
+    const newPerson = req.body;
+
+    console.log(oldPersonIdx);
+
+    if (newPerson.number === '') {
+        return res.status(400)
+            .json({'error': "Missing number"});
+    } else if (oldPersonIdx === -1) { // Check for null or undefined
+        return res.status(404)
+            .json({'error': `Person not found`});
+    }
+
+    persons[oldPersonIdx].number = newPerson.number;
+    
+    return res.sendStatus(200);
+});
 
 const PORT = 3001;
 app.listen(PORT);

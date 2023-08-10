@@ -43,7 +43,10 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
-    res.send(persons);
+    Person.find({})
+        .then(people => {
+            res.json(people);
+        })
 })
 
 app.get('/api/persons/:id', (req, res) => {

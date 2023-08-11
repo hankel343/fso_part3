@@ -73,16 +73,16 @@ app.get('/api/persons/:id', (req, res) => {
 })
 
 app.get('/info', (req, res) => {
-    const numPeople = persons.length;
-    const timeStamp = new Date();
-
-    const html = 
-    `
-        <p>Phonebook has info for ${numPeople} people</p>
-        <p>${timeStamp}</p>
-    `
-
-    res.send(html);
+    Person.count()
+        .then(result => {
+            const html =
+            `
+                <p>The phone book currently contains ${result} entries.</p>
+                <p> Updated as of: <br> ${new Date()}</p>
+            `
+            res.send(html);
+        })
+        .catch(err => next(err))
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {

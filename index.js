@@ -98,7 +98,7 @@ app.post('/api/persons', (req, res, next) => {
         .catch(err => next(err))
 })
 
-app.put('/api/persons/:id', (req, res) => {
+app.put('/api/persons/:id', (req, res, next) => {
     const body = req.body;
 
     const person = {

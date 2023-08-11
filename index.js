@@ -9,10 +9,12 @@ const unknownEndpoint = (req, res) => {
 }
 
 const errorHandler = (err, req, res, next) => {
-    console.log(err.message);
+    console.error(err.message);
 
-    if (err.message === 'CastError') {
+    if (err.name === 'CastError') {
         return res.status(400).send({ error: 'malformatted id' });
+    } else if (err.name === 'ValidationError') {
+        return res.status(400).json({ error: err.message });
     }
 
     next(err);
@@ -40,6 +42,7 @@ app.get('/api/persons', (req, res) => {
         .then(people => {
             res.json(people);
         })
+        .catch(err => next(err))
 })
 
 app.get('/api/persons/:id', (req, res) => {
@@ -71,13 +74,13 @@ app.delete('/api/persons/:id', (req, res, next) => {
         .catch(err => next(err))
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
     const payload = req.body;
 
-    if (payload.name === '') {
+    if (payload.name === undefined) {
         return res.status(400)
             .json({'error': 'Missing name'});
-    } else if (payload.number === '') {
+    } else if (payload.number === undefined) {
         return res.status(400)
             .json({'error': 'Missing number'});
     }
@@ -90,12 +93,9 @@ app.post('/api/persons', (req, res) => {
     person.save()
         .then(res => {
             console.log("Person saved");
+            return res.json(person);
         })
-        .catch(err => {
-            console.log("Unable to save person to database"); 
-        })
-
-    return res.json(person);
+        .catch(err => next(err))
 })
 
 app.put('/api/persons/:id', (req, res) => {
@@ -106,7 +106,7 @@ app.put('/api/persons/:id', (req, res) => {
         number: body.number
     }
 
-    Person.findByIdAndUpdate(req.params.id, person, { new: true })
+    Person.findByIdAndUpdate(req.params.id, person, { new: true, runValidators: true })
         .then(updatedPerson => {
             return res.json(updatedPerson);
         })

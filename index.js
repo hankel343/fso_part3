@@ -81,31 +81,30 @@ app.delete('/api/persons/:id', (req, res) => {
 })
 
 app.post('/api/persons', (req, res) => {
-    const generateId = () => {
-        return Math.floor(Math.random() * 10000);
-    }
+    const payload = req.body;
 
-    const isDuplicateName = (name) => {
-        return (persons.find(p => p.name === name) != undefined);
-    }
-
-    const newPerson = req.body;
-
-    if (newPerson.name === '') {
+    if (payload.name === '') {
         return res.status(400)
             .json({'error': 'Missing name'});
-    } else if (newPerson.number === '') {
+    } else if (payload.number === '') {
         return res.status(400)
             .json({'error': 'Missing number'});
-    } else if (isDuplicateName(newPerson.name)) {
-        return res.status(400)
-            .json({'error': `${newPerson.name} is already in the phone book`});
     }
 
-    newPerson.id = generateId();
-    persons = persons.concat(newPerson);
+    const person = new Person({
+        name: payload.name,
+        number: payload.number
+    })
 
-    return res.json(newPerson);
+    person.save()
+        .then(res => {
+            console.log("Person saved");
+        })
+        .catch(err => {
+            console.log("Unable to save person to database"); 
+        })
+
+    return res.json(person);
 })
 
 app.put('/api/persons/:id', (req, res) => {

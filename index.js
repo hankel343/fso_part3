@@ -64,12 +64,11 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id);
-    const person = persons.find(p => p.id === id);
-
-    person
-        ? res.send(person)
-        : res.send(404).end();
+    Person.findById(req.params.id)
+        .then(result => {
+            return res.send(result);
+        })
+        .catch(err => next(err))
 })
 
 app.get('/info', (req, res) => {

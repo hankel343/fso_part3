@@ -91,7 +91,7 @@ app.post('/api/persons', (req, res, next) => {
     })
 
     person.save()
-        .then(res => {
+        .then(result => {
             console.log("Person saved");
             return res.json(person);
         })
